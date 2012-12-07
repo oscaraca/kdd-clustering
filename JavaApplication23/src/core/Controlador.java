@@ -1,0 +1,91 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package core;
+
+import Archivo.Escritor;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.tika.config.TikaConfig;
+
+/**
+ *
+ * @author oscaraca
+ */
+public class Controlador {
+    
+    Index index;
+    
+    public static void main(String [] args) throws IOException, Exception {
+
+    String busqueda = "prueba caja";
+    Controlador p = new Controlador();
+    //p.pruebaIndexarYBuscar(busqueda);
+    p.pruebaIndexarYEscribirMatriz();
+    }
+
+    public Controlador() {
+        index = new Index();
+    }
+    
+    
+    public ArrayList<Documento> pruebaIndexarCarpeta(String dataDir) {
+        try {
+            TikaConfig config = TikaConfig.getDefaultConfig();  //3
+
+            long start = new Date().getTime();
+            TextIndexer indexer = new TextIndexer();  
+
+
+            ArrayList<Documento> documentosIndexados = indexer.index(dataDir, null);
+            int numIndexed = documentosIndexados.size();
+            //indexer.close();
+            long end = new Date().getTime();
+
+            System.out.println("Indexing " + numIndexed + " files took "
+            + (end - start) + " milliseconds");
+
+            index = new Index(documentosIndexados);
+            index.crearMatriz();
+            return documentosIndexados;
+        } catch (IOException ex) {
+            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (Exception ex) {
+            Logger.getLogger(Controlador.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        return null;
+    }
+    
+    public void pruebaBuscar(String busqueda, ArrayList<Documento> documentosIndexados) throws IOException, Exception {
+        Buscador buscador = new Buscador(index.getMatriz());
+        buscador.rankearDocumentos(documentosIndexados, busqueda);
+    }
+    
+    public void pruebaIndexarYEscribirMatriz() throws IOException, Exception {
+        TikaConfig config = TikaConfig.getDefaultConfig();  //3
+
+        String  dataDir="/afs/eisc/user/pregrado/2010/oscaraca/Desktop/kdd/proyecto clustering/data/docs/pdf";
+
+        long start = new Date().getTime();
+        TextIndexer indexer = new TextIndexer();  
+
+
+        ArrayList<Documento> documentosIndexados = indexer.index(dataDir, null);
+        int numIndexed = documentosIndexados.size();
+        //indexer.close();
+        long end = new Date().getTime();
+
+        System.out.println("Indexing " + numIndexed + " files took "
+        + (end - start) + " milliseconds");
+
+        Index index = new Index(documentosIndexados);
+        index.crearMatriz();
+        double[][] matriz = index.getMatriz();
+        
+       index.guardarMatrizEnArchivo("archivo matriz.osc");
+    }
+}
