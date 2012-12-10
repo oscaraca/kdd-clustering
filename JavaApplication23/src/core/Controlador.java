@@ -5,6 +5,7 @@
 package core;
 
 import Archivo.Escritor;
+import clustering.Kmeans;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -87,5 +88,10 @@ public class Controlador {
         double[][] matriz = index.getMatriz();
         
        index.guardarMatrizEnArchivo("archivo matriz.osc");
+    }
+    
+    public void applyKMeans(ArrayList<Documento> documentosIndexados) {
+        Kmeans kmeans = new Kmeans(index.getMatriz(), documentosIndexados);
+        kmeans.groupByKMeans(3);
     }
 }

@@ -4,6 +4,7 @@
  */
 package core;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -15,6 +16,15 @@ public class Documento {
     ArrayList<Termino> terminos;
     ArrayList<Termino> terminosSinRepetir;
     ArrayList<Termino> terminosDiccionarioDocumento;
+    File file;
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public File getFile() {
+        return file;
+    }
 
     public ArrayList<Termino> getTerminosDiccionarioDocumento() {
         return terminosDiccionarioDocumento;

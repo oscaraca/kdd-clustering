@@ -153,6 +153,7 @@ public class TextIndexer  {
           String [] diccionario = new TextIndexer().analyze(dicc).split(" ");
           
           doc.filtrarTerminosDiccionario(diccionario);
+          doc.setFile(f);
           documentos.add(doc);
           i++;
       }
