@@ -6,11 +6,15 @@ package core;
 
 import Archivo.Escritor;
 import clustering.Kmeans;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
 import org.apache.tika.config.TikaConfig;
 
 /**
@@ -20,6 +24,12 @@ import org.apache.tika.config.TikaConfig;
 public class Controlador {
     
     Index index;
+    Kmeans kmeans;
+    ArrayList<Rank> documentosRankeados;
+
+    public ArrayList<Rank> getDocumentosRankeados() {
+        return documentosRankeados;
+    }
     
     public static void main(String [] args) throws IOException, Exception {
 
@@ -61,9 +71,18 @@ public class Controlador {
         return null;
     }
     
-    public void pruebaBuscar(String busqueda, ArrayList<Documento> documentosIndexados) throws IOException, Exception {
+    public ArrayList<Rank> pruebaBuscar(String busqueda, ArrayList<Documento> documentosIndexados) throws IOException, Exception {
         Buscador buscador = new Buscador(index.getMatriz());
-        buscador.rankearDocumentos(documentosIndexados, busqueda);
+        documentosRankeados = new ArrayList();
+        documentosRankeados = buscador.rankearDocumentos(documentosIndexados, busqueda);
+        String documentosRelacionados = "";
+        return documentosRankeados;
+    }
+    
+    public JPanel seleccionarDocumento(File file) {
+        //mostrarDocumentosRelacionados(file);
+        JPanel panelConPDF = crearPanelConDocumento(file);
+        return panelConPDF;
     }
     
     public void pruebaIndexarYEscribirMatriz() throws IOException, Exception {
@@ -91,7 +110,26 @@ public class Controlador {
     }
     
     public void applyKMeans(ArrayList<Documento> documentosIndexados) {
-        Kmeans kmeans = new Kmeans(index.getMatriz(), documentosIndexados);
-        kmeans.groupByKMeans(3);
+        kmeans = new Kmeans(index.getMatriz(), documentosIndexados);
+        kmeans.groupByKMeans(5);
+    }
+    
+    public ArrayList<Documento> mostrarDocumentosRelacionados(File file, JList listaDocumentosRelacionados) {
+        ArrayList<Documento> documentosRelacionados = kmeans.buscarDocumentosEnCluster(file);
+        System.out.println("Documentos relacionados con "+file.getName()+":");
+        DefaultListModel modelo = new DefaultListModel();
+        for (int i=0; i<documentosRelacionados.size(); i++) {
+            System.out.println(documentosRelacionados.get(i).getFile().getName());
+            modelo.addElement(documentosRelacionados.get(i).getFile().getName());
+        }
+        
+        listaDocumentosRelacionados.setModel(modelo);
+        return documentosRelacionados;
+    }
+    
+    public JPanel crearPanelConDocumento(File file) {
+        System.out.println("Construyendo JPanel con "+file.getPath());
+        JPanelConPDF jp = new JPanelConPDF(file.getPath());
+        return jp;
     }
 }

@@ -4,6 +4,8 @@
  */
 package core;
 
+import java.io.File;
+
 /**
  *
  * @author oscaraca
@@ -11,13 +13,23 @@ package core;
 public class Rank {
     String nombreDocumento;
     double similitudCoseno;
+    File file;
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public File getFile() {
+        return file;
+    }
 
     public Rank() {
     }
 
-    public Rank(String nombreDocumento, double similitudCoseno) {
+    public Rank(String nombreDocumento, double similitudCoseno, File file) {
         this.nombreDocumento = nombreDocumento;
         this.similitudCoseno = similitudCoseno;
+        this.file = file;
     }
 
     public String getNombreDocumento() {

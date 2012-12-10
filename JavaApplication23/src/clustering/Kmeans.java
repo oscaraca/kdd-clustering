@@ -5,6 +5,7 @@
 package clustering;
 
 import core.Documento;
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -49,9 +50,15 @@ public class Kmeans {
             System.out.println("Iteraccion " + iteraccion);
             asignarDocumentosAClusters(k);
             for (int i=0; i<clusters.size(); i++) {
-                double [] centroideAnterior = clusters.get(i).getCentroide();
+                double [] centroideAnterior = clusters.get(i).getCentroideAnterior();
+                System.out.print("centroideAnterior1:");
+                imprimirCentroide(centroideAnterior);
                 clusters.get(i).calcularNuevoCentroide();
+                System.out.print("centroideAnterior2:");
+                imprimirCentroide(centroideAnterior);
                 double[] nuevoCentroide = clusters.get(i).getCentroide();
+                System.out.print("nuevoCentroide:");
+                imprimirCentroide(nuevoCentroide);
                 centroidesIguales = centroidesIguales(centroideAnterior,nuevoCentroide);
                 if (centroidesIguales) {
                     System.out.println("Centroides iguales"+ i);
@@ -67,11 +74,17 @@ public class Kmeans {
             for (int j=0; j<cluster.getDocumentos().size(); j++) {
                 System.out.println(cluster.getDocumentos().get(j).getNombreDocumento());
             }
+            System.out.println("----------------------------------------------------------");
         }
     }
     
     private void asignarDocumentosAClusters(int k) {
         double [] distancias = new double[k];
+        
+        for (int n=0; n<k; n++) {
+                clusters.get(n).reiniciarDocumentos();
+            }
+        
         for (int i=0; i<matrizIndexada.length; i++) {
             boolean primeraIteraccion = true;
             double menorDistancia = 0;
@@ -90,7 +103,6 @@ public class Kmeans {
                 double dist = distanciaEuclideana(matrizIndexada[i], clusters.get(n).getCentroide());
                 
                 if(dist==menorDistancia) {
-                    clusters.get(n).reiniciarDocumentos();
                     clusters.get(n).addDocumento(matrizIndexada[i], documentosIndexados.get(i));
                 }
             }
@@ -116,4 +128,22 @@ public class Kmeans {
         }
     }
     
+    private void imprimirCentroide(double [] centroide) {
+        String vector ="(";
+        for(int i=0; i<centroide.length; i++) {
+            vector+=centroide[i]+" ";
+        }
+        vector+=")";
+        System.out.println(vector);
+    }
+    
+    public ArrayList<Documento> buscarDocumentosEnCluster(File file) {
+        
+        for(Cluster cluster : clusters) {
+            for(Documento documento : cluster.getDocumentos()) {
+                if(documento.getFile().getName().equals(file.getName())) return cluster.getDocumentos();
+            }
+        }
+        return null;
+    }
 }

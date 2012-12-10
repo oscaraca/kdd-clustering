@@ -31,6 +31,14 @@ public class Cluster {
     public double[] getCentroide() {
         return centroide;
     }
+    
+    public double[] getCentroideAnterior() {
+        double [] centroide = new double[this.centroide.length];
+        for(int i=0; i<this.centroide.length; i++) {
+            centroide[i] = this.centroide[i];
+        }
+        return centroide;
+    }
 
     public ArrayList<Documento> getDocumentos() {
         return documentos;

@@ -40,11 +40,11 @@ public class Buscador {
         this.matriz = Matriz;
     }
     
-    public void rankearDocumentos(ArrayList<Documento> documentos, String consulta) {
+    public ArrayList<Rank> rankearDocumentos(ArrayList<Documento> documentos, String consulta) {
         ArrayList<Rank> rank = new ArrayList();
         for (int i=0; i<matriz.length; i++) {
             double similitud = similitudCoseno(matriz[i], consulta);
-            rank.add(new Rank(documentos.get(i).getNombreDocumento(), similitud)); 
+            rank.add(new Rank(documentos.get(i).getNombreDocumento(), similitud, documentos.get(i).getFile())); 
         }
         
         //Ordenar. Selection-Sort
@@ -74,10 +74,17 @@ public class Buscador {
             }
         }
         
-        for (Rank rank1 : rank) {
-            System.out.println(rank1.getNombreDocumento()+" "+rank1.getSimilitudCoseno());
+        ArrayList<Rank> rankFiltrado = new ArrayList();
+        for (int i=0; i<rank.size(); i++) { //Filtra los que tengan similitud coseno mayor a 0.5
+            if(rank.get(i).getSimilitudCoseno()>0.5) {
+                rankFiltrado.add(rank.get(i));
+            }
         }
         
+        for (Rank rank1 : rankFiltrado) {
+            System.out.println(rank1.getNombreDocumento()+" "+rank1.getSimilitudCoseno());
+        }
+        return rankFiltrado;
     }
     
     private double similitudCoseno(double [] vectorDocumento, String consulta) {
